@@ -1,13 +1,7 @@
 ---
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - dev
   pull_request:
-  schedule:
-    - cron: "30 0 * * *"
 
 # For info on the OS versions, architecture, etc., see
 # https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
@@ -17,14 +11,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [ubuntu:24.04, debian:bookworm]
-        os: [ubuntu_x64_8_cores, ubuntu_arm64_8_core]
-        include:
-          - image: archlinux:latest
-            os: ubuntu_x64_8_cores
+#        image: [ubuntu:24.04, debian:bookworm]
+        os: [ubuntu-latest]
+#        include:
+#          - image: archlinux:latest
+#            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
-    container:
-      image: ${{ matrix.image }}
+#    container:
+#      image: ${{ matrix.image }}
     steps:
       - name: Check OS info
         run: |
@@ -32,6 +26,9 @@ jobs:
 
       - name: Checkout the repository
         uses: actions/checkout@v4
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
 
       - name: Run Test OxCaml action
         uses: ./.github/actions/test-oxcaml
@@ -43,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-latest]
+        os: [macos-14, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout the repository
