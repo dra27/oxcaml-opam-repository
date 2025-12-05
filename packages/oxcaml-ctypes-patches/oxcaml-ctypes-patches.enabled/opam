@@ -11,5 +11,6 @@ depends: [
   ("oxcaml-ctypes-foreign" {post} | "oxcaml-ctypes-foreign-patches" {post})
   "ctypes" {build & (
               = "0.23.0+ox"
+            | = "0.24.0+ox"
             )}
 ]
