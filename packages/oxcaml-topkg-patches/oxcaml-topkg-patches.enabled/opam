@@ -11,5 +11,6 @@ depends: [
   ("oxcaml-utop" {post} | "oxcaml-utop-patches" {post})
   "topkg" {build & (
              = "1.0.8+ox"
+           | = "1.1.1+ox"
            )}
 ]

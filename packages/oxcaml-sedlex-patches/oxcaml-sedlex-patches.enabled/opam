@@ -12,5 +12,6 @@ depends: [
   "sedlex" {build & (
               = "3.3+ox"
             | = "3.6+ox"
+            | = "3.7+ox"
             )}
 ]

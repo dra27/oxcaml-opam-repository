@@ -11,5 +11,6 @@ depends: [
   ("oxcaml-ocamlc-loc" {post} | "oxcaml-ocamlc-loc-patches" {post})
   "ocamlbuild" {build & (
                   = "0.15.0+ox"
+                | = "0.16.1+ox"
                 )}
 ]
