@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -ex
+
+export OPAMROOT="${OPAMROOT:-/usr/local/home/$USER/.opam}"
+opam_switch=oxcaml-arm64-minus25
+timings_file=timings
+if ! opam var root &> /dev/null; then
+  opam init --bare --no-setup
+fi
+
+# Ensure the minus25 remote has been created
+if ! opam repo list --all --short | grep -Fxq minus25; then
+  opam repo add --dont-select minus25 git+https://github.com/dra27/oxcaml-opam-repository.git#minus25
+fi
+
+# If the switch was previous created, remove it
+if opam switch list --short | grep -Fxq $opam_switch; then
+  opam switch remove -y $opam_switch
+fi
+
+: > "$timings_file"
+
+if opam switch list --short | grep -Fxq 'prime-depexts'; then
+  opam switch create --confirm-level=unsafe-yes prime-depexts --repos=minus25,default \
+    conf-c++ conf-gmp conf-netsnmp conf-pam conf-pkg-config conf-gmp-powm-sec conf-libffi conf-libpcre conf-libssl conf-zlib conf-zstd
+fi
+
+# OxCaml and external dependencies
+start=$(date +%s)
+opam switch create oxcaml-arm64-minus25 --repos=minus25,default oxcaml-compiler.5.2.0minus25
+echo "switch create: $(($(date +%s) - start))s" >> "$timings_file"
+
+# Installing these packages with versions individually reliably hits solver bugs
+for pkg in $(sed -e 's/ *#.*//' pkglist); do
+  start=$(date +%s)
+  opam install -y $pkg
+  echo "$pkg: $(($(date +%s) - start))s" >> "$timings_file"
+done
